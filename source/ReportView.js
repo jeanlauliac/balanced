@@ -1,6 +1,7 @@
 'use strict'
 
 var ExpenseView = require('./ExpenseView')
+var Immutable = require('immutable')
 var React = require('react')
 var Report = require('./Report')
 
@@ -9,6 +10,7 @@ var Report = require('./Report')
  */
 var ReportView = React.createClass({
   propTypes: {
+    people: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     /**
      * The application data.
      */
@@ -19,13 +21,22 @@ var ReportView = React.createClass({
     var report = this.props.report
     var expenses = report.expenses.toKeyedSeq().map((expense, id) => {
       return (
-        <li key={id}><ExpenseView expense={expense} /></li>
+        <li key={id}>
+          <ExpenseView
+            currency={report.currency}
+            expense={expense}
+            people={this.props.people}
+          />
+        </li>
       )
     }).toArray()
     return (
-      <ul>
-        {expenses}
-      </ul>
+      <div>
+        <h1>{report.title}</h1>
+        <ul>
+          {expenses}
+        </ul>
+      </div>
     )
   },
 })

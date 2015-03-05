@@ -47,7 +47,7 @@ var ApplicationView = React.createClass({
     return (
       <div>
         <p><a href='#' onClick={this._closeReport}>Back</a></p>
-        <ReportView report={report} />
+        <ReportView people={this.state.application.people} report={report} />
       </div>
     )
   },

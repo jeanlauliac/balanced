@@ -6,4 +6,13 @@ var Currency = enumerate('CURRENCY', {
   USD: undefined,
 })
 
+Currency.symbolOf = (() => {
+  var symbols = new Map([
+    [Currency.EUR, '€'],
+    [Currency.GBP, '£'],
+    [Currency.USD, '$'],
+  ])
+  return (curr) => symbols.get(curr)
+})()
+
 module.exports = Currency

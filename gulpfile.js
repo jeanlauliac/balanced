@@ -13,7 +13,7 @@ var util = require('gulp-util')
 var watchify = require('watchify')
 
 gulp.task('default', ['all'])
-gulp.task('dev', ['all', 'watch', 'serve'])
+gulp.task('dev', ['html', 'watch', 'serve'])
 gulp.task('all', ['bundle', 'html'])
 
 gulp.task('bundle', function () {
