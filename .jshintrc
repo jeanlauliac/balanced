@@ -1,0 +1,16 @@
+{
+  "indent": 2,
+  "quotmark": "single",
+  "maxparams": 4,
+  "maxdepth": 4,
+  "maxstatements": 20,
+  "maxlen": 80,
+  "node": true,
+  "browser": false,
+  "white": true,
+  "eqnull": true,
+  "asi": true,
+  "laxcomma": true,
+  "sub": true,
+  "strict": false
+}
