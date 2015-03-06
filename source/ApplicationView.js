@@ -3,6 +3,7 @@
 var Account = require('./Account')
 var Application = require('./Application')
 var Immutable = require('immutable')
+var ExpenseEditor = require('./ExpenseEditor')
 var React = require('react')
 var ReportView = require('./ReportView')
 
@@ -24,15 +25,33 @@ var ApplicationView = React.createClass({
   },
 
   render() {
-    if (this.state.application.openReportId === undefined) {
-      return this._renderReports()
+    if (this.state.application.openExpenseId !== undefined) {
+      return this._renderOpenExpense()
     }
-    return this._renderOpenReport()
+    if (this.state.application.openReportId !== undefined) {
+      return this._renderOpenReport()
+    }
+    return this._renderReports()
   },
 
   _closeReport() {
     this.setState({
       application: this.state.application.set('openReportId', undefined)
+    })
+  },
+
+  _saveOpenExpense(newExpense) {
+    this.setState({
+      application: Application.saveOpenExpense(
+        this.state.application,
+        newExpense
+      ),
+    })
+  },
+
+  _openExpense(id) {
+    this.setState({
+      application: this.state.application.set('openExpenseId', id),
     })
   },
 
@@ -42,12 +61,36 @@ var ApplicationView = React.createClass({
     })
   },
 
+  _renderOpenExpense() {
+    var report = Application.getOpenReport(this.state.application)
+    var expense = report.expenses.get(this.state.application.openExpenseId)
+    return (
+      <div>
+        <p>
+          <a href='#' onClick={this._openExpense.bind(this, undefined)}>
+            Back
+          </a>
+        </p>
+        <ExpenseEditor
+          currency={report.currency}
+          initialExpense={expense}
+          people={this.state.application.people}
+          onSave={this._saveOpenExpense}
+        />
+      </div>
+    )
+  },
+
   _renderOpenReport() {
     var report = Application.getOpenReport(this.state.application)
     return (
       <div>
         <p><a href='#' onClick={this._closeReport}>Back</a></p>
-        <ReportView people={this.state.application.people} report={report} />
+        <ReportView
+          people={this.state.application.people}
+          onOpenExpense={this._openExpense}
+          report={report}
+        />
       </div>
     )
   },

@@ -12,6 +12,7 @@ var ExpenseView = React.createClass({
   propTypes: {
     currency: React.PropTypes.string.isRequired,
     expense: React.PropTypes.instanceOf(Expense.Record).isRequired,
+    onRequestEdit: React.PropTypes.func.isRequired,
     people: React.PropTypes.instanceOf(Immutable.Map).isRequired,
   },
 
@@ -25,6 +26,7 @@ var ExpenseView = React.createClass({
       <div>
         <p>{expense.reason}, {expense.value} {currencySymbol}</p>
         <p>{payerName} paid for {benefitersNames}.</p>
+        <p><a href='#' onClick={() => this.props.onRequestEdit()}>Edit</a></p>
       </div>
     )
   },
