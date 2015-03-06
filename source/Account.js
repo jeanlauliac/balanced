@@ -3,20 +3,24 @@
 var Immutable = require('immutable')
 var invariant = require('./invariant')
 
-var Account = {
-  Record: new Immutable.Record({
-    /**
-     * Map IDs to each report in the account.
-     */
-    reports: new Immutable.Map(),
-  }, 'Account'),
-
+class Account extends Immutable.Record({
   /**
-   * Make a new empty account.
+   * Map IDs to each report in the account.
    */
-  empty() {
-    return new Account.Record()
+  reports: new Immutable.Map(),
+}) {
+  saveExpense(reportId, expenseId, newExpense) {
+    var report = this.reports.get(reportId);
+    report = report.saveExpense(expenseId, newExpense)
+    return this.set('reports', this.reports.set(reportId, report))
   }
+}
+
+/**
+ * Make a new empty account.
+ */
+Account.empty = () => {
+  return new Account()
 }
 
 module.exports = Account

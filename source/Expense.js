@@ -12,16 +12,16 @@ var Expense = {
     /**
      * ID of the person who paid for the expense.
      */
-    payer: null,
+    payer: undefined,
     /**
      * String describing the expense reason.
      */
-    reason: null,
+    reason: undefined,
     /**
      * The value of the expense. The currency is agnostic (generally defined at
      * the report layer).
      */
-    value: null,
+    value: undefined,
   }, 'Expense'),
 
   /**

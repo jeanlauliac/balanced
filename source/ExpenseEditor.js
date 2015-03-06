@@ -22,7 +22,8 @@ var ExpenseEditor = React.createClass({
   render() {
     var expense = this.state.expense
     var currencySymbol = Currency.symbolOf(this.props.currency)
-    var payerName = this.props.people.get(expense.payer).name
+    var payerName = expense.payer !== undefined ?
+      this.props.people.get(expense.payer).name : ''
     var benefitersNames = expense.benefiters.map((id) =>
       this.props.people.get(id).name).toArray().join(', ')
     return (
@@ -32,7 +33,14 @@ var ExpenseEditor = React.createClass({
           type='text'
           value={expense.reason}
         />
-        <p>{expense.value} {currencySymbol}</p>
+        <p>
+          <input
+            onChange={this._onValueChange}
+            type='number'
+            value={expense.value}
+          />
+          {currencySymbol}
+        </p>
         <p>{payerName} paid for {benefitersNames}.</p>
         <p><a href='#' onClick={this._onSave}>Save</a></p>
       </form>
@@ -48,6 +56,12 @@ var ExpenseEditor = React.createClass({
   _onSave() {
     this.props.onSave(this.state.expense)
   },
+
+  _onValueChange(ev) {
+    this.setState({
+      expense: this.state.expense.set('value', ev.target.valueAsNumber)
+    })
+  }
 })
 
 module.exports = ExpenseEditor

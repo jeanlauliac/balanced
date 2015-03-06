@@ -11,11 +11,9 @@ var Report = require('./Report')
 var ReportView = React.createClass({
   propTypes: {
     people: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    /**
-     * The application data.
-     */
-    report: React.PropTypes.instanceOf(Report.Record),
+    onCreateExpense: React.PropTypes.func.isRequired,
     onOpenExpense: React.PropTypes.func.isRequired,
+    report: React.PropTypes.instanceOf(Report),
   },
 
   render() {
@@ -42,6 +40,9 @@ var ReportView = React.createClass({
     return (
       <div>
         <h1>{report.title}</h1>
+        <p><a href='#' onClick={this.props.onCreateExpense}>
+          Add an expense
+        </a></p>
         <ul>
           {expenses}
         </ul>

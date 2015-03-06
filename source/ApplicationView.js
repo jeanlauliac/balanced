@@ -1,11 +1,13 @@
 'use strict'
 
-var Account = require('./Account')
-var Application = require('./Application')
-var Immutable = require('immutable')
-var ExpenseEditor = require('./ExpenseEditor')
-var React = require('react')
-var ReportView = require('./ReportView')
+import Account from './Account'
+import Application from './Application'
+import Immutable from 'immutable'
+import Expense from './Expense'
+import ExpenseEditor from './ExpenseEditor'
+import React from 'react'
+import ReportView from './ReportView'
+import transformify from './utils/transformify'
 
 /**
  * Displays the whole application.
@@ -15,7 +17,7 @@ var ApplicationView = React.createClass({
     /**
      * The application data.
      */
-    initialApplication: React.PropTypes.instanceOf(Application.Record),
+    initialApplication: React.PropTypes.instanceOf(Application),
   },
 
   getInitialState() {
@@ -25,6 +27,9 @@ var ApplicationView = React.createClass({
   },
 
   render() {
+    if (this.state.application.creatingExpense) {
+      return this._renderCreateExpense()
+    }
     if (this.state.application.openExpenseId !== undefined) {
       return this._renderOpenExpense()
     }
@@ -34,35 +39,51 @@ var ApplicationView = React.createClass({
     return this._renderReports()
   },
 
-  _closeReport() {
-    this.setState({
-      application: this.state.application.set('openReportId', undefined)
-    })
-  },
-
   _saveOpenExpense(newExpense) {
     this.setState({
-      application: Application.saveOpenExpense(
-        this.state.application,
-        newExpense
-      ),
+      application: this.state.application.saveOpenExpense(newExpense),
     })
   },
 
   _openExpense(id) {
     this.setState({
-      application: this.state.application.set('openExpenseId', id),
+      application: this.state.application.set('openExpenseId', id)
+        .set('creatingExpense', false),
     })
   },
 
   _openReport(id) {
     this.setState({
-      application: this.state.application.set('openReportId', id),
+      application: this.state.application
+        .set('openReportId', id)
+        .set('openExpenseId', undefined),
     })
   },
 
+  _renderCreateExpense() {
+    var report = this.state.application.getOpenReport()
+    return (
+      <div>
+        <p>
+          <a href='#' onClick={this._openExpense.bind(this, undefined)}>
+            Back
+          </a>
+        </p>
+        <ExpenseEditor
+          currency={report.currency}
+          initialExpense={new Expense.Record({
+            payer: '1',
+            benefiters: new Immutable.Set(['1', '2', '3']),
+          })}
+          people={this.state.application.people}
+          onSave={this._transforms.createExpense.bind(this)}
+        />
+      </div>
+    )
+  },
+
   _renderOpenExpense() {
-    var report = Application.getOpenReport(this.state.application)
+    var report = this.state.application.getOpenReport()
     var expense = report.expenses.get(this.state.application.openExpenseId)
     return (
       <div>
@@ -82,12 +103,17 @@ var ApplicationView = React.createClass({
   },
 
   _renderOpenReport() {
-    var report = Application.getOpenReport(this.state.application)
+    var report = this.state.application.getOpenReport()
     return (
       <div>
-        <p><a href='#' onClick={this._closeReport}>Back</a></p>
+        <p><a
+          href='#'
+          onClick={this._openReport.bind(this, undefined)}>
+          Back
+        </a></p>
         <ReportView
           people={this.state.application.people}
+          onCreateExpense={this._transforms.startCreatingExpense.bind(this)}
           onOpenExpense={this._openExpense}
           report={report}
         />
@@ -115,6 +141,11 @@ var ApplicationView = React.createClass({
       </div>
     )
   },
+
+  _transforms: transformify('application', {
+    startCreatingExpense: (app) => app.startCreatingExpense(),
+    createExpense: (app, newExpense) => app.createExpense(newExpense),
+  }),
 })
 
 module.exports = ApplicationView

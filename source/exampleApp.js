@@ -31,10 +31,10 @@ Carmelo Lossett`
 var names = namesString.split('\n')
 
 function exampleApp() {
-  return new Application.Record({
-    account: new Account.Record({
+  return new Application({
+    account: new Account({
       reports: new Immutable.Map([
-        ['1', new Report.Record({
+        ['1', new Report({
           currency: Currency.EUR,
           expenses: new Immutable.Map([
             ['10', new Expense.Record({
