@@ -71,12 +71,8 @@ var ApplicationView = React.createClass({
         </p>
         <ExpenseEditor
           currency={report.currency}
-          initialExpense={new Expense.Record({
-            payer: '1',
-            benefiters: new Immutable.Set(['1', '2', '3']),
-          })}
-          people={this.state.application.people}
           onSave={this._transforms.createExpense.bind(this)}
+          people={this.state.application.people}
         />
       </div>
     )

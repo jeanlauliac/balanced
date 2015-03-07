@@ -3,14 +3,12 @@
 var Immutable = require('immutable')
 var invariant = require('./invariant')
 
-var Person = {
-  Record: new Immutable.Record({
-    name: null,
-  }, 'Person'),
+class Person extends Immutable.Record({
+  name: null,
+}) {}
 
-  named(name) {
-    return new Person.Record({ name })
-  },
+Person.named = (name) => {
+  return new Person({ name })
 }
 
 module.exports = Person

@@ -37,25 +37,25 @@ function exampleApp() {
         ['1', new Report({
           currency: Currency.EUR,
           expenses: new Immutable.Map([
-            ['10', new Expense.Record({
+            ['10', new Expense({
               benefiters: new Immutable.Set(['2', '3']),
               payer: '2',
               reason: 'Gas Paris to Berlin',
               value: 54.3,
             })],
-            ['11', new Expense.Record({
+            ['11', new Expense({
               benefiters: new Immutable.Set(['1', '2', '3']),
               payer: '2',
               reason: 'Lunch Sat',
               value: 18.5,
             })],
-            ['12', new Expense.Record({
+            ['12', new Expense({
               benefiters: new Immutable.Set(['1', '2', '3']),
               payer: '3',
               reason: 'Science Museum',
               value: 21,
             })],
-            ['13', new Expense.Record({
+            ['13', new Expense({
               benefiters: new Immutable.Set(['1', '2']),
               payer: '1',
               reason: 'Something Special',

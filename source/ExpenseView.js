@@ -11,7 +11,7 @@ var React = require('react')
 var ExpenseView = React.createClass({
   propTypes: {
     currency: React.PropTypes.string.isRequired,
-    expense: React.PropTypes.instanceOf(Expense.Record).isRequired,
+    expense: React.PropTypes.instanceOf(Expense).isRequired,
     onRequestEdit: React.PropTypes.func.isRequired,
     people: React.PropTypes.instanceOf(Immutable.Map).isRequired,
   },
