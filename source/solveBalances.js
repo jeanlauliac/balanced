@@ -20,13 +20,16 @@ function solveBalances(balances) {
       transactions.push({ from: ng[0], to: ps[0], value: -ng[1] })
       negatives.shift()
       ps[1] += ng[1]
-      if (ps[1] <= 0) {
+      if (ps[1] <= 0.01) {
         positives.shift()
       }
     } else {
       transactions.push({ from: ng[0], to: ps[0], value: ps[1] })
       positives.shift()
       ng[1] += ps[1]
+      if (ng[1] >= -0.01) {
+        negatives.shift()
+      }
     }
   }
   invariant(negatives.length === 0, 'balances do no sum up to zero')

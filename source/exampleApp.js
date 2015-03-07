@@ -40,7 +40,7 @@ function exampleApp() {
             ['10', new Expense({
               benefiters: new Immutable.Set(['2', '3']),
               payer: '2',
-              reason: 'Gas Paris to Berlin',
+              reason: 'Gas',
               value: 54.3,
             })],
             ['11', new Expense({
@@ -52,18 +52,18 @@ function exampleApp() {
             ['12', new Expense({
               benefiters: new Immutable.Set(['1', '2', '3']),
               payer: '3',
-              reason: 'Science Museum',
+              reason: 'Museum',
               value: 21,
             })],
             ['13', new Expense({
               benefiters: new Immutable.Set(['1', '2']),
               payer: '1',
-              reason: 'Something Special',
+              reason: 'Something else',
               value: 12,
             })],
           ]),
           people: new Immutable.Set(['1', '2', '3']),
-          title: 'Eastern Europe Road Trip'
+          title: 'Road Trip'
         })],
       ]),
     }),

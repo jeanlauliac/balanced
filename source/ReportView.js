@@ -5,6 +5,7 @@ var ExpenseView = require('./ExpenseView')
 var Immutable = require('immutable')
 var React = require('react')
 var Report = require('./Report')
+import solveBalances from './solveBalances'
 
 /**
  * Displays a single report.
@@ -23,14 +24,25 @@ var ReportView = React.createClass({
 
   _renderReport() {
     var report = this.props.report
-    var balances = report.getBalances().toKeyedSeq().map((balance, id) => {
+    var balances = report.getBalances()
+    var balanceViews = balances.toKeyedSeq().map((balance, id) => {
       return (
         <li key={id}>
-          {this.props.people.get(id).name}: {balance}
-          {Currency.symbolOf(report.currency)}
+          {this.props.people.get(id).name}:
+          {Currency.symbolOf(report.currency)}{balance}
         </li>
       )
     }).toArray()
+    var transactionViews = solveBalances(balances).toSeq()
+      .map((transaction) => {
+        return (
+          <li key={transaction.from + '=>' + transaction.to}>
+            {this.props.people.get(transaction.from).name} needs to give{' '}
+            {Currency.symbolOf(report.currency)}{transaction.value}{' '}
+            to {this.props.people.get(transaction.to).name}
+          </li>
+        )
+      }).toArray()
     var expenses = report.expenses.toKeyedSeq().map((expense, id) => {
       return (
         <li key={id}>
@@ -47,7 +59,9 @@ var ReportView = React.createClass({
       <div>
         <h1>{report.title}</h1>
         <h2>Balances</h2>
-        <ul>{balances}</ul>
+        <ul>{balanceViews}</ul>
+        <h2>Transactions</h2>
+        <ul>{transactionViews}</ul>
         <h2>Expenses</h2>
         <p><a href='#' onClick={this.props.onCreateExpense}>
           Add an expense
