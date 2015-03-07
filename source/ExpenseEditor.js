@@ -32,6 +32,10 @@ var ExpenseEditor = React.createClass({
   render() {
     var expense = this.state.expense
     var currencySymbol = Currency.symbolOf(this.props.currency)
+    var saveLink = 'Save'
+    if (Expense.areValidOptions(this._getExpenseOptions())) {
+      saveLink = <a href='#' onClick={this._onSave}>Save</a>
+    }
     return (
       <form>
         <input
@@ -47,9 +51,18 @@ var ExpenseEditor = React.createClass({
           />
           {currencySymbol}
         </p>
-        <p><a href='#' onClick={this._onSave}>Save</a></p>
+        <p>{saveLink}</p>
       </form>
     )
+  },
+
+  _getExpenseOptions() {
+    return {
+      reason: this.state.reason,
+      value: Number(this.state.valueAsString),
+      payer: '1',
+      benefiters: new Immutable.Set(['1', '2', '3']),
+    }
   },
 
   _onReasonChange(ev) {
@@ -59,15 +72,7 @@ var ExpenseEditor = React.createClass({
   },
 
   _onSave() {
-    invariant(this.state.reason.length > 0, 'missing reason')
-    var value = Number(this.state.valueAsString)
-    invariant(!isNaN(value) && value > 0, 'invalid value')
-    this.props.onSave(new Expense.Record({
-      reason: this.state.reason,
-      value: Number(this.state.valueAsString),
-      payer: '1',
-      benefiters: new Immutable.Set(['1', '2', '3']),
-    }))
+    this.props.onSave(new Expense(this._getExpenseOptions()))
   },
 
   _onValueChange(ev) {

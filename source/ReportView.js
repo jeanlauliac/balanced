@@ -1,5 +1,6 @@
 'use strict'
 
+var Currency = require('./Currency')
 var ExpenseView = require('./ExpenseView')
 var Immutable = require('immutable')
 var React = require('react')
@@ -17,14 +18,19 @@ var ReportView = React.createClass({
   },
 
   render() {
-    if (this.props.openExpenseId !== undefined) {
-      return this._renderExpense()
-    }
     return this._renderReport()
   },
 
   _renderReport() {
     var report = this.props.report
+    var balances = report.getBalances().toKeyedSeq().map((balance, id) => {
+      return (
+        <li key={id}>
+          {this.props.people.get(id).name}: {balance}
+          {Currency.symbolOf(report.currency)}
+        </li>
+      )
+    }).toArray()
     var expenses = report.expenses.toKeyedSeq().map((expense, id) => {
       return (
         <li key={id}>
@@ -40,6 +46,9 @@ var ReportView = React.createClass({
     return (
       <div>
         <h1>{report.title}</h1>
+        <h2>Balances</h2>
+        <ul>{balances}</ul>
+        <h2>Expenses</h2>
         <p><a href='#' onClick={this.props.onCreateExpense}>
           Add an expense
         </a></p>

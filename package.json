@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest source"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/jeanlauliac/balanced",
   "devDependencies": {
     "babel": "^4.6.3",
+    "babel-jest": "^4.0.0",
     "babelify": "^5.0.3",
     "browserify": "^8.1.3",
     "envify": "^3.2.0",
@@ -32,6 +33,7 @@
     "gulp-traceur": "^0.12.0",
     "gulp-util": "^3.0.0",
     "immutable": "^3.6.2",
+    "jest-cli": "^0.4.0",
     "merge-stream": "^0.1.5",
     "moment": "^2.7.0",
     "multipipe": "^0.1.1",
@@ -44,5 +46,10 @@
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.4.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "testFileExtensions": ["es6", "js"],
+    "moduleFileExtensions": ["js", "json", "es6"]
+  }
 }

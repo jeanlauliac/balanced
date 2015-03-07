@@ -29,6 +29,22 @@ class Report extends Immutable.Record({
     var expenses = this.expenses.set(id, newExpense)
     return this.set('expenses', expenses)
   }
+
+  /**
+   * Get a map of peoples' ID to they balance in this report. The sum of
+   * all balances is zero.
+   */
+  getBalances() {
+    return this.expenses.reduce((balances, expense) => {
+      var balance = balances.get(expense.payer) || 0
+      balances = balances.set(expense.payer, balance + expense.value)
+      var sharedValue = expense.value / expense.benefiters.size
+      return expense.benefiters.reduce((balances, benefiterID) => {
+        var balance = balances.get(benefiterID) || 0
+        return balances.set(benefiterID, balance - sharedValue)
+      }, balances)
+    }, new Immutable.Map())
+  }
 }
 
 module.exports = Report
