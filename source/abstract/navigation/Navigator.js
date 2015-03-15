@@ -6,21 +6,21 @@ import Tab from './Tab'
 import invariant from '../../invariant'
 import mergeClasses from '../../utils/mergeClasses'
 
-var Styles = {
-  TAB_TITLES: stylify({
+var Styles = stylify({
+  'ul.titles': {
     listStyle: 'none',
     margin: 0,
     padding: 0,
-  }),
-  TAB_TITLE: stylify({
-    color: '#AAA9AB',
-    fontSize: '0.875em',
-    textTransform: 'uppercase',
-  }),
-  TAB_TITLE_OPEN: stylify({
-    color: '#575458',
-  }),
-}
+    '& li': {
+      color: '#AAA9AB',
+      fontSize: '0.875em',
+      textTransform: 'uppercase',
+      '&.open': {
+        color: '#575458',
+      }
+    }
+  }
+})
 
 /**
  * Displays content on top of which is added a tab system. Clicking on a tab
@@ -62,7 +62,7 @@ var Navigator = React.createClass({
       React.Children.map(frame.props.children, this._renderTabTitle)
     return (
       <div>
-        <ul className={Styles.TAB_TITLES}>
+        <ul className={Styles.titles}>
           {this._renderBack(frame)}
           {tabTitles}
         </ul>
@@ -95,7 +95,7 @@ var Navigator = React.createClass({
     if (tab.props.isOpen) {
       return (
         <li
-          className={mergeClasses(Styles.TAB_TITLE, Styles.TAB_TITLE_OPEN)}
+          className={Styles.open}
           key={tab.props.key}>
           {tab.props.title}
         </li>

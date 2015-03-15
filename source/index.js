@@ -8,15 +8,16 @@ var exampleApp = require('./exampleApp')
 var url = require('url')
 
 stylify({
-  fontFamily: "'Open Sans', sans-serif",
-  fontSize: '100%/1.4',
-  margin: 0,
-  padding: 0,
-}, 'body')
-
-stylify({
-  fontWeight: 'normal',
-}, 'h1, h2, h3, h4, h5, h6')
+  'body': {
+    fontFamily: "'Open Sans', sans-serif",
+    fontSize: '100%/1.4',
+    margin: 0,
+    padding: 0,
+  },
+  'h1, h2, h3, h4, h5, h6': {
+    fontWeight: 'normal',
+  },
+})
 
 ;(function main() {
   var root = document.getElementById('root')

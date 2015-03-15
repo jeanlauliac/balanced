@@ -6,8 +6,10 @@ var Immutable = require('immutable')
 var React = require('react')
 import stylify from './utils/stylify'
 
-var EXPENSE_CLASS = stylify({
-  border: '1px solid #d00',
+var Styles = stylify({
+  '.root': {
+    border: '1px solid #d00',
+  },
 })
 
 /**
@@ -28,7 +30,7 @@ var ExpenseView = React.createClass({
     var benefitersNames = expense.benefiters.map((id) =>
       this.props.people.get(id).name).toArray().join(', ')
     return (
-      <div className={EXPENSE_CLASS}>
+      <div className={Styles.root}>
         <p>{expense.reason}, {expense.value} {currencySymbol}</p>
         <p>{payerName} paid for {benefitersNames}.</p>
         <p><a href='#' onClick={() => this.props.onRequestEdit()}>Edit</a></p>

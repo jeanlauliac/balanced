@@ -12,13 +12,16 @@ function StyleExtractor() {
 }
 
 StyleExtractor.prototype.clear = function () {
-  this._fileStyles = {}
+  this._fileSpecs = {}
 }
 
 StyleExtractor.prototype.writeFile = function (filename, cb) {
   var ab = new Absurd()
-  for (var styles in this._fileStyles) {
-    ab.add(this._fileStyles[styles])
+  for (var file in this._fileSpecs) {
+    var specs = this._fileSpecs[file]
+    for (var i = 0; i < specs.length; ++i) {
+      ab.add(specs[i])
+    }
   }
   ab.compile(function (err, css) {
     if (err) {
@@ -33,11 +36,11 @@ StyleExtractor.prototype.writeFile = function (filename, cb) {
 StyleExtractor.prototype.transform = function (filename) {
   var classPrefix = path.basename(filename).replace('.', '_') + '__'
   var source = ''
-  var styleExtractor = this
+  var _this = this
   return through(function write(data) {
     source += data
   }, function end() {
-    styleExtractor._fileStyles[filename] = {}
+    var fileSpecs = _this._fileSpecs[filename] = []
     var result = falafel(source, function (node) {
       if (!(
         node.type === 'CallExpression' &&
@@ -47,19 +50,54 @@ StyleExtractor.prototype.transform = function (filename) {
         return
       }
       var obj = eval('(' + node.arguments[0].source() + ')')
-      if (node.arguments[1] != null) {
-        var selector = JSON.parse(node.arguments[1].source())
-        styleExtractor._fileStyles[filename][selector] = obj
-        node.update('void 0')
-      } else {
-        var className = classPrefix + node.start
-        styleExtractor._fileStyles[filename]['.' + className] = obj
-        node.update('\'' + className + '\'')
-      }
+      var meta = stylifyImpl(obj, {}, function (className) {
+        return classPrefix + className
+      })
+      fileSpecs.push(meta.spec)
+      node.update(JSON.stringify(meta.classMap))
     }).toString()
     this.queue(result)
     this.queue(null)
   })
+}
+
+function objectAssign(obj) {
+  for (var i = 1; i < arguments.length; i++) {
+    var sourceObj = arguments[i]
+    for (var field in sourceObj) {
+      obj[field] = sourceObj[field]
+    }
+  }
+  return obj
+}
+
+/**
+ * Given an absurd.js declaration object `spec` and an existing `classMap`,
+ * recursively scan and transform all the classes being used by an generated
+ * equivalent. Returns an object containing the transformed `spec` as well as a
+ * `classMap` from the plain classes to the generated one.
+ */
+function stylifyImpl(spec, classMap, gen) {
+  var retSpec = {}
+  classMap = objectAssign({}, classMap)
+  for (var field in spec) {
+    var value = spec[field]
+    var kind = Object.prototype.toString.call(value)
+    if (kind !== '[object Object]') {
+      retSpec[field] = value
+      continue
+    }
+    var newField = field.replace(/\.([a-z_-]*)/g, function (match, className) {
+      if (!classMap.hasOwnProperty(className)) {
+        classMap[className] = gen(className)
+      }
+      return '.' + classMap[className]
+    })
+    var sub = stylifyImpl(value, classMap, gen)
+    objectAssign(classMap, sub.classMap)
+    retSpec[newField] = sub.spec
+  }
+  return { spec: retSpec, classMap: classMap }
 }
 
 module.exports = StyleExtractor
