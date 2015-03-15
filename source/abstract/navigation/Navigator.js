@@ -7,19 +7,40 @@ import invariant from '../../invariant'
 import mergeClasses from '../../utils/mergeClasses'
 
 var Styles = stylify({
+  '.header': {
+    color: '#AAA9AB',
+    fontSize: '0.875em',
+    textTransform: 'uppercase',
+    'a': {
+      color: 'inherit',
+      textDecoration: 'none',
+    }
+  },
   'ul.titles': {
     listStyle: 'none',
     margin: 0,
     padding: 0,
-    '& li': {
-      color: '#AAA9AB',
-      fontSize: '0.875em',
-      textTransform: 'uppercase',
+    'li': {
+      display: 'inline-block',
       '&.open': {
         color: '#575458',
-      }
+        padding: '1rem .2rem .5rem 1rem'
+      },
+    },
+    'a': {
+      padding: '1rem .2rem .5rem 1rem',
+    },
+  },
+  '.action': {
+    float: 'right',
+    padding: '1rem 1rem .5rem .2rem',
+    'span': {
+      backgroundColor: '#474646',
+      color: '#fff',
+      margin: '-.1rem -.4rem',
+      padding: '.1rem .4rem',
     }
-  }
+  },
 })
 
 /**
@@ -61,12 +82,14 @@ var Navigator = React.createClass({
     var tabTitles =
       React.Children.map(frame.props.children, this._renderTabTitle)
     return (
-      <div>
-        <ul className={Styles.titles}>
-          {this._renderBack(frame)}
-          {tabTitles}
-        </ul>
-        {this._renderAction(frame)}
+      <div className={this.props.className}>
+        <div className={Styles.header}>
+          {this._renderAction(frame)}
+          <ul className={Styles.titles}>
+            {this._renderBack(frame)}
+            {tabTitles}
+          </ul>
+        </div>
         {this._renderContent(frame)}
       </div>
     )
@@ -77,8 +100,11 @@ var Navigator = React.createClass({
       return
     }
     return (
-      <a href='#' onClick={() => frame.props.onAction()}>
-        {frame.props.actionLabel}
+      <a
+        className={Styles.action}
+        href='#'
+        onClick={() => frame.props.onAction()}>
+        <span>{frame.props.actionLabel}</span>
       </a>
     )
   },
@@ -113,7 +139,7 @@ var Navigator = React.createClass({
   _renderBack(frame) {
     if (frame.props.onBackClick != undefined) {
       return (
-        <li key='back'>
+        <li>
           <a href='#' onClick={() => frame.props.onBackClick()}>{'<<'}</a>
         </li>
       )

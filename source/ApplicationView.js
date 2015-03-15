@@ -12,6 +12,13 @@ import ReportView from './ReportView'
 import Tab from './abstract/navigation/Tab'
 import transformify from './utils/transformify'
 
+var Styles = stylify({
+  '.root': {
+    margin: '0 auto',
+    maxWidth: '32rem',
+  },
+})
+
 /**
  * Displays the whole application.
  */
@@ -31,7 +38,7 @@ var ApplicationView = React.createClass({
 
   render() {
     return (
-      <Navigator>
+      <Navigator className={Styles.root}>
         {this._renderReportsFrame()}
         {this._renderOpenReportFrame()}
         {this._renderOpenExpenseFrame()}
@@ -157,12 +164,13 @@ var ApplicationView = React.createClass({
       )
     }).toArray()
     return (
-      <Frame><Tab title='Reports' isOpen={true}>
-        <h1>Reports</h1>
-        <ul>
-          {reports}
-        </ul>
-      </Tab></Frame>
+      <Frame actionLabel='New Report'>
+        <Tab title='Balanced' isOpen={true}>
+          <ul>
+            {reports}
+          </ul>
+        </Tab>
+      </Frame>
     )
   },
 
