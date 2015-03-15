@@ -46,11 +46,16 @@ StyleExtractor.prototype.transform = function (filename) {
       )) {
         return
       }
-      //var className = classPrefix + styleExtractor._seq.toString(36)
-      var className = classPrefix + node.start
       var obj = eval('(' + node.arguments[0].source() + ')')
-      styleExtractor._fileStyles[filename]['.' + className] = obj
-      node.update('\'' + className + '\'')
+      if (node.arguments[1] != null) {
+        var selector = JSON.parse(node.arguments[1].source())
+        styleExtractor._fileStyles[filename][selector] = obj
+        node.update('void 0')
+      } else {
+        var className = classPrefix + node.start
+        styleExtractor._fileStyles[filename]['.' + className] = obj
+        node.update('\'' + className + '\'')
+      }
     }).toString()
     this.queue(result)
     this.queue(null)

@@ -49,7 +49,7 @@ var ReportView = React.createClass({
           <ExpenseView
             currency={report.currency}
             expense={expense}
-            onRequestEdit={this.props.onOpenExpense.bind(this, id)}
+            onRequestEdit={this.props.onOpenExpense.bind(null, id)}
             people={this.props.people}
           />
         </li>

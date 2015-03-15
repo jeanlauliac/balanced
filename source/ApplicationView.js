@@ -2,11 +2,14 @@
 
 import Account from './Account'
 import Application from './Application'
+import Frame from './abstract/navigation/Frame'
 import Immutable from 'immutable'
 import Expense from './Expense'
 import ExpenseEditor from './ExpenseEditor'
+import Navigator from './abstract/navigation/Navigator'
 import React from 'react'
 import ReportView from './ReportView'
+import Tab from './abstract/navigation/Tab'
 import transformify from './utils/transformify'
 
 /**
@@ -27,16 +30,34 @@ var ApplicationView = React.createClass({
   },
 
   render() {
+    return (
+      <Navigator>
+        {this._renderReportsFrame()}
+        {this._renderOpenReportFrame()}
+        {this._renderOpenExpenseFrame()}
+      </Navigator>
+    )
+  },
+
+  _renderOpenExpenseFrame() {
     if (this.state.application.creatingExpense) {
-      return this._renderCreateExpense()
+      return (
+        <Frame onBackClick={this._openExpense.bind(this, undefined)}>
+          <Tab title='Creating' isOpen={true}>
+            {this._renderCreateExpense()}
+          </Tab>
+        </Frame>
+      )
     }
     if (this.state.application.openExpenseId !== undefined) {
-      return this._renderOpenExpense()
+      return (
+        <Frame onBackClick={this._openExpense.bind(this, undefined)}>
+          <Tab title='Editing' isOpen={true}>
+            {this._renderOpenExpense()}
+          </Tab>
+        </Frame>
+      )
     }
-    if (this.state.application.openReportId !== undefined) {
-      return this._renderOpenReport()
-    }
-    return this._renderReports()
   },
 
   _saveOpenExpense(newExpense) {
@@ -58,6 +79,10 @@ var ApplicationView = React.createClass({
         .set('openReportId', id)
         .set('openExpenseId', undefined),
     })
+  },
+
+  _goBack() {
+
   },
 
   _renderCreateExpense() {
@@ -98,26 +123,29 @@ var ApplicationView = React.createClass({
     )
   },
 
-  _renderOpenReport() {
+  _renderOpenReportFrame() {
+    if (this.state.application.openReportId === undefined) {
+      return
+    }
     var report = this.state.application.getOpenReport()
     return (
-      <div>
-        <p><a
-          href='#'
-          onClick={this._openReport.bind(this, undefined)}>
-          Back
-        </a></p>
-        <ReportView
-          people={this.state.application.people}
-          onCreateExpense={this._transforms.startCreatingExpense.bind(this)}
-          onOpenExpense={this._openExpense}
-          report={report}
-        />
-      </div>
+      <Frame
+        onBackClick={this._openReport.bind(this, undefined)}
+        actionLabel='Create'
+        onAction={this._transforms.startCreatingExpense.bind(this)}>
+        <Tab title='Report' isOpen={true}>
+          <ReportView
+            people={this.state.application.people}
+            onCreateExpense={this._transforms.startCreatingExpense.bind(this)}
+            onOpenExpense={this._openExpense}
+            report={report}
+          />
+        </Tab>
+      </Frame>
     )
   },
 
-  _renderReports() {
+  _renderReportsFrame() {
     var reportSeq = this.state.application.account.reports.toKeyedSeq()
     var reports = reportSeq.map((report, id) => {
       return (
@@ -129,12 +157,12 @@ var ApplicationView = React.createClass({
       )
     }).toArray()
     return (
-      <div>
+      <Frame><Tab title='Reports' isOpen={true}>
         <h1>Reports</h1>
         <ul>
           {reports}
         </ul>
-      </div>
+      </Tab></Frame>
     )
   },
 
